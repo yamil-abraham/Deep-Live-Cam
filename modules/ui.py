@@ -27,6 +27,7 @@ from modules.utilities import (
 )
 from modules.video_capture import VideoCapturer
 from modules.gettext import LanguageManager
+from modules.elevenlabs_streaming import elevenlabs_voice_changer
 import platform
 
 if platform.system() == "Windows":
@@ -90,6 +91,26 @@ def init(start: Callable[[], None], destroy: Callable[[], None], lang: str) -> c
     return ROOT
 
 
+def toggle_ai_voice(enabled: bool) -> None:
+    """Toggle the ElevenLabs AI voice conversion on/off"""
+    modules.globals.ai_voice = enabled
+    save_switch_states()
+    
+    if enabled:
+        try:
+            voice_name = modules.globals.current_voice_name or "Default"
+            elevenlabs_voice_changer.start()
+            update_status(f"AI Voice enabled - Using {voice_name} voice")
+        except Exception as e:
+            update_status(f"Failed to start AI Voice: {str(e)}")
+            modules.globals.ai_voice = False
+    else:
+        try:
+            elevenlabs_voice_changer.stop()
+            update_status("AI Voice disabled")
+        except Exception as e:
+            update_status(f"Failed to stop AI Voice: {str(e)}")
+
 def save_switch_states():
     switch_states = {
         "keep_fps": modules.globals.keep_fps,
@@ -105,6 +126,9 @@ def save_switch_states():
         "show_fps": modules.globals.show_fps,
         "mouth_mask": modules.globals.mouth_mask,
         "show_mouth_mask_box": modules.globals.show_mouth_mask_box,
+        "ai_voice": modules.globals.ai_voice,
+        "current_voice_id": modules.globals.current_voice_id,
+        "current_voice_name": modules.globals.current_voice_name,
     }
     with open("switch_states.json", "w") as f:
         json.dump(switch_states, f)
@@ -129,6 +153,9 @@ def load_switch_states():
         modules.globals.show_mouth_mask_box = switch_states.get(
             "show_mouth_mask_box", False
         )
+        modules.globals.ai_voice = switch_states.get("ai_voice", False)
+        modules.globals.current_voice_id = switch_states.get("current_voice_id", None)
+        modules.globals.current_voice_name = switch_states.get("current_voice_name", "Default")
     except FileNotFoundError:
         # If the file doesn't exist, use default values
         pass
@@ -305,6 +332,17 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
         ),
     )
     show_mouth_mask_box_switch.place(relx=0.6, rely=0.55)
+
+    # AI Voice toggle switch
+    ai_voice_var = ctk.BooleanVar(value=modules.globals.ai_voice)
+    ai_voice_switch = ctk.CTkSwitch(
+        root,
+        text=_("AI Voice"),
+        variable=ai_voice_var,
+        cursor="hand2",
+        command=lambda: toggle_ai_voice(ai_voice_var.get()),
+    )
+    ai_voice_switch.place(relx=0.1, rely=0.50)
 
     start_button = ctk.CTkButton(
         root, text=_("Start"), cursor="hand2", command=lambda: analyze_target(start, root)
@@ -593,8 +631,21 @@ def select_source_path() -> None:
         RECENT_DIRECTORY_SOURCE = os.path.dirname(modules.globals.source_path)
         image = render_image_preview(modules.globals.source_path, (200, 200))
         source_label.configure(image=image)
+        
+        # Update voice mapping based on selected image
+        voice_name = elevenlabs_voice_changer.set_voice_by_image_path(source_path)
+        modules.globals.current_voice_id = elevenlabs_voice_changer.current_voice_id
+        modules.globals.current_voice_name = voice_name
+        
+        # Update status to show which voice is selected
+        if voice_name != "Default":
+            update_status(f"Face selected: {os.path.basename(source_path)} | Voice: {voice_name}")
+        else:
+            update_status(f"Face selected: {os.path.basename(source_path)} | Using default voice")
     else:
         modules.globals.source_path = None
+        modules.globals.current_voice_id = None
+        modules.globals.current_voice_name = "Default"
         source_label.configure(image=None)
 
 

@@ -1,0 +1,49 @@
+{
+  "voice_mappings": {
+    "messi": {
+      "patterns": ["messi", "lionel", "leo"],
+      "voice_id": "HE0DfUqcVhNKeaf5bIeY",
+      "voice_name": "Messi Voice",
+      "description": "Voice for Lionel Messi"
+    },
+    "trump": {
+      "patterns": ["trump", "donald"],
+      "voice_id": "nPczCjzI2devNBz1zQrb",
+      "voice_name": "Trump Voice",
+      "description": "Voice for Donald Trump"
+    },
+    "obama": {
+      "patterns": ["obama", "barack"],
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Obama Voice",
+      "description": "Voice for Barack Obama"
+    },
+    "elon": {
+      "patterns": ["elon", "musk"],
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "voice_name": "Elon Voice",
+      "description": "Voice for Elon Musk"
+    },
+    "rajesh": {
+      "patterns": ["rajesh", "raj"],
+      "voice_id": "ThT5KcBeYPX3keUQqHPh",
+      "voice_name": "Rajesh Voice",
+      "description": "Voice for Rajesh"
+    },
+    "default": {
+      "patterns": [],
+      "voice_id": "21m00Tcm4TlvDq8ikWAM",
+      "voice_name": "Default Voice",
+      "description": "Default voice when no match is found"
+    }
+  },
+  "custom_voices": {
+    "_comment": "Add your custom ElevenLabs voice clones here",
+    "example_custom": {
+      "patterns": ["custom_name"],
+      "voice_id": "your_custom_voice_id_here",
+      "voice_name": "Custom Voice",
+      "description": "Your custom cloned voice"
+    }
+  }
+}

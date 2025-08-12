@@ -41,3 +41,6 @@ show_mouth_mask_box = False
 mask_feather_ratio = 8
 mask_down_size = 0.50
 mask_size = 1
+ai_voice = False  # Toggle for ElevenLabs voice conversion
+current_voice_id = None  # Currently selected voice ID for ElevenLabs
+current_voice_name = "Default"  # Name of the current voice

@@ -29,3 +29,10 @@ media/Colapinto.jpg
 media/Obama.jpg
 media/Messi.jpeg
 media/Rajesh1.jpg
+.env/
+*.env
+*.DS_Store
+*.ipynb_checkpoints
+media/Alexandre Costa - saiba mais sobre o fundador da Cacau Show.jpeg
+.gitignore
+media/Chocholate caro_ Cacau subiu de preço por medo de escassez futura, mas não se justifica agora, diz CEO da Cacau Show - Estadão.jpeg
